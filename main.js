@@ -1,1 +1,1 @@
-/* BABFT 6×5 Binary Screen Guide — no interactive elements */
+/* no js yet or needed */
