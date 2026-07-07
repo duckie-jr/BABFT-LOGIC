@@ -763,3 +763,205 @@ h2 {
 .led-g-btn.btn-on { border-color:#44cc44 !important; color:#44cc44 !important; }
 .led-b-btn.btn-on { border-color:#4488ff !important; color:#4488ff !important; }
 .led-swatch { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:middle; margin-right:4px; }
+
+/* ══════════════════════════════════════════
+   4-BIT RIPPLE-CARRY ADDER SECTION
+══════════════════════════════════════════ */
+
+#ripple-adder { border-top: 1px solid var(--border); }
+
+.rca-svg { max-width: 560px; overflow: visible; }
+
+.rca-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rca-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.rca-label {
+  font-family: monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.rca-op { font-size: 1.1rem; color: var(--muted); }
+
+.rca-sum-label { color: var(--accent); }
+
+.rca-bits {
+  display: flex;
+  gap: 4px;
+}
+
+.rca-bit-btn {
+  width: 36px;
+  height: 36px;
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: color 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+}
+
+.rca-bit-btn:hover { border-color: #444; color: var(--text); }
+
+.rca-bit-btn.bit-on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.rca-out-bit {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.rca-out-bit.bit-1 { color: #4ade80; border-color: #4ade80; }
+.rca-out-bit.bit-0 { color: var(--muted); border-color: var(--border); }
+
+.rca-cout-bit {
+  margin-right: 6px;
+  border-style: dashed;
+}
+
+.rca-cout-bit.bit-1 {
+  color: #e07a38 !important;
+  border-color: #e07a38 !important;
+  border-style: solid;
+}
+
+.rca-dec {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-width: 36px;
+}
+
+.rca-sum-dec {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.rca-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.35rem 0;
+}
+
+.rca-pos-header { margin-bottom: 0; }
+
+.rca-pos {
+  width: 36px;
+  text-align: center;
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.rca-cout-pos {
+  margin-right: 6px;
+  color: #666;
+}
+
+/* ══════════════════════════════════════════
+   TWO-DIGIT SEGMENT DISPLAY SECTION
+══════════════════════════════════════════ */
+
+#seg-display { border-top: 1px solid var(--border); }
+
+.seg-decode-table { max-width: 480px; }
+
+.seg-screen-placeholder {
+  width: 240px;
+  height: 116px;
+  background: #080808;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.seg-live {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.seg-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.seg-step-btn {
+  width: 38px;
+  height: 38px;
+  font-family: monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: color 0.12s, border-color 0.12s;
+  line-height: 1;
+}
+
+.seg-step-btn:hover { border-color: #444; color: var(--text); }
+
+.seg-value-display {
+  font-family: monospace;
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  min-width: 72px;
+  text-align: center;
+}
+
+/* SVG segment elements — toggled by JS */
+.seg-display-svg {
+  display: block;
+  background: #060606;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 8px;
+  margin-top: 0.5rem;
+  overflow: visible;
+}
+
+.seg {
+  fill: #141414;
+  transition: fill 0.08s, filter 0.08s;
+}
+
+.seg.seg-on {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
