@@ -20,6 +20,8 @@
       <li><a href="#t-latch">T-Latch</a></li>
       <li><a href="#mux">MUX</a></li>
       <li><a href="#full-adder">Full Adder</a></li>
+      <li><a href="#ripple-adder">4-bit Adder</a></li>
+      <li><a href="#seg-display">7-Seg</a></li>
       <li><a href="#led-display">LED</a></li>
     </ul>
   </nav>
@@ -1053,6 +1055,264 @@
     </div>
   </section>
 
+
+  <section id="ripple-adder">
+    <div class="container">
+
+      <h2>4-bit Ripple-Carry Adder</h2>
+      <p class="section-sub">Chain 4 full adders — carry ripples from bit 0 up to bit 3, adding two 4-bit numbers into a 5-bit result.</p>
+
+      <div class="concept">
+        <p>Every full adder handles one bit position. The carry-out of FA₀ feeds the carry-in of FA₁ — it must settle before FA₁ can produce its output, which is why the propagation delay "ripples" upward through all four stages.</p>
+        <ul class="bullet-list">
+          <li><b>FA₀ (bit 0 — LSB):</b> Cin is always tied to 0</li>
+          <li><b>FA₁–FA₃:</b> each Cin comes from the carry-out of the stage below</li>
+          <li><b>Cout (bit 4):</b> overflow — sum exceeds 1111₂ (15)</li>
+          <li><b>Range:</b> 0 + 0 = 0 up to 15 + 15 = 30 (11110₂)</li>
+          <li><b>Gate cost:</b> 4 × 5 = <b>20 gates</b> (8 XOR + 8 AND + 4 OR)</li>
+        </ul>
+      </div>
+
+      <div class="ha-layout">
+
+        <div>
+          <p class="diagram-label">Circuit</p>
+          <svg class="circuit-svg rca-svg" viewBox="0 0 540 140" aria-label="4-bit ripple-carry adder block diagram">
+
+            <!-- ── FA blocks ── -->
+            <rect x="28"  y="50" width="80" height="34" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="68"  y="64" class="gate-box-lbl">FA&#x2080;</text>
+            <text x="68"  y="76" class="gate-box-lbl" font-size="9" fill="#555">(LSB)</text>
+
+            <rect x="153" y="50" width="80" height="34" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="193" y="70" class="gate-box-lbl">FA&#x2081;</text>
+
+            <rect x="278" y="50" width="80" height="34" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="318" y="70" class="gate-box-lbl">FA&#x2082;</text>
+
+            <rect x="403" y="50" width="80" height="34" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="443" y="64" class="gate-box-lbl">FA&#x2083;</text>
+            <text x="443" y="76" class="gate-box-lbl" font-size="9" fill="#555">(MSB)</text>
+
+            <!-- ── Carry chain at y=67 ── -->
+            <line x1="0"   y1="67" x2="28"  y2="67" stroke="#3d3d3d" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="2"    y="62"  class="wire-lbl muted-lbl">0</text>
+
+            <line x1="108" y1="67" x2="153" y2="67" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="117"  y="63"  class="wire-lbl" fill="#666">C&#x2081;</text>
+
+            <line x1="233" y1="67" x2="278" y2="67" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="242"  y="63"  class="wire-lbl" fill="#666">C&#x2082;</text>
+
+            <line x1="358" y1="67" x2="403" y2="67" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="367"  y="63"  class="wire-lbl" fill="#666">C&#x2083;</text>
+
+            <line x1="483" y1="67" x2="540" y2="67" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="488"  y="62"  class="wire-lbl accent-lbl">Cout</text>
+
+            <!-- ── A inputs from top (x = block_left + 18) ── -->
+            <line x1="46"  y1="18" x2="46"  y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="41"   y="14"  class="wire-lbl">A&#x2080;</text>
+
+            <line x1="171" y1="18" x2="171" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="166"  y="14"  class="wire-lbl">A&#x2081;</text>
+
+            <line x1="296" y1="18" x2="296" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="291"  y="14"  class="wire-lbl">A&#x2082;</text>
+
+            <line x1="421" y1="18" x2="421" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="416"  y="14"  class="wire-lbl">A&#x2083;</text>
+
+            <!-- ── B inputs from top (x = block_right - 18) ── -->
+            <line x1="90"  y1="18" x2="90"  y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="85"   y="14"  class="wire-lbl">B&#x2080;</text>
+
+            <line x1="215" y1="18" x2="215" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="210"  y="14"  class="wire-lbl">B&#x2081;</text>
+
+            <line x1="340" y1="18" x2="340" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="335"  y="14"  class="wire-lbl">B&#x2082;</text>
+
+            <line x1="465" y1="18" x2="465" y2="50" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="460"  y="14"  class="wire-lbl">B&#x2083;</text>
+
+            <!-- ── Sum outputs from bottom (block center_x, y=84→115) ── -->
+            <line x1="68"  y1="84" x2="68"  y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="63"   y="127" class="wire-lbl accent-lbl">S&#x2080;</text>
+
+            <line x1="193" y1="84" x2="193" y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="188"  y="127" class="wire-lbl accent-lbl">S&#x2081;</text>
+
+            <line x1="318" y1="84" x2="318" y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="313"  y="127" class="wire-lbl accent-lbl">S&#x2082;</text>
+
+            <line x1="443" y1="84" x2="443" y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="438"  y="127" class="wire-lbl accent-lbl">S&#x2083;</text>
+
+          </svg>
+        </div>
+
+        <div class="ha-right">
+          <p class="diagram-label">Live Calculator</p>
+          <div class="rca-demo">
+
+            <div class="rca-row rca-pos-header">
+              <span class="rca-label"></span>
+              <div class="rca-bits">
+                <span class="rca-pos">3</span>
+                <span class="rca-pos">2</span>
+                <span class="rca-pos">1</span>
+                <span class="rca-pos">0</span>
+              </div>
+            </div>
+
+            <div class="rca-row">
+              <span class="rca-label">A</span>
+              <div class="rca-bits">
+                <button class="rca-bit-btn" data-rca="a" data-bit="3">0</button>
+                <button class="rca-bit-btn" data-rca="a" data-bit="2">0</button>
+                <button class="rca-bit-btn" data-rca="a" data-bit="1">0</button>
+                <button class="rca-bit-btn" data-rca="a" data-bit="0">0</button>
+              </div>
+              <span class="rca-dec" id="rca-a-dec">= 0</span>
+            </div>
+
+            <div class="rca-row">
+              <span class="rca-label rca-op">+</span>
+            </div>
+
+            <div class="rca-row">
+              <span class="rca-label">B</span>
+              <div class="rca-bits">
+                <button class="rca-bit-btn" data-rca="b" data-bit="3">0</button>
+                <button class="rca-bit-btn" data-rca="b" data-bit="2">0</button>
+                <button class="rca-bit-btn" data-rca="b" data-bit="1">0</button>
+                <button class="rca-bit-btn" data-rca="b" data-bit="0">0</button>
+              </div>
+              <span class="rca-dec" id="rca-b-dec">= 0</span>
+            </div>
+
+            <div class="rca-divider"></div>
+
+            <div class="rca-row">
+              <span class="rca-label rca-sum-label">Σ</span>
+              <div class="rca-bits">
+                <span class="rca-out-bit rca-cout-bit bit-0" id="rca-cout">0</span>
+                <span class="rca-out-bit bit-0" id="rca-s3">0</span>
+                <span class="rca-out-bit bit-0" id="rca-s2">0</span>
+                <span class="rca-out-bit bit-0" id="rca-s1">0</span>
+                <span class="rca-out-bit bit-0" id="rca-s0">0</span>
+              </div>
+              <span class="rca-dec rca-sum-dec" id="rca-sum-dec">= 0</span>
+            </div>
+
+            <div class="rca-row rca-pos-header">
+              <span class="rca-label"></span>
+              <div class="rca-bits">
+                <span class="rca-pos rca-cout-pos">C</span>
+                <span class="rca-pos">S₃</span>
+                <span class="rca-pos">S₂</span>
+                <span class="rca-pos">S₁</span>
+                <span class="rca-pos">S₀</span>
+              </div>
+            </div>
+
+          </div>
+          <p class="clock-note" style="margin-top:0.8rem">Click any bit to toggle it. <b>C</b> lights orange when the sum overflows 4 bits (result &gt; 15).</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="seg-display">
+    <div class="container">
+
+      <h2>Two-Digit Segment Display</h2>
+      <p class="section-sub">12 LED screens in additive mode — two digits sharing inner verticals I and M to cut gate cost.</p>
+
+      <div class="concept">
+        <p>Each of the 12 segments is a BaBFT LED screen set to <strong>additive mode</strong>, white colour, gated through an AND gate from a segment decoder. The inner verticals <b>I</b> and <b>M</b> sit physically between the digits — because additive screens naturally combine any signal driving them, both digits can activate a shared segment simultaneously at zero extra gate cost.</p>
+        <ul class="bullet-list">
+          <li><b>Digit 1 uses:</b> A1, H, I (shared), G1, L, M (shared), D1</li>
+          <li><b>Digit 2 uses:</b> A2, I (shared), K, G2, M (shared), N, D2</li>
+          <li><b>Additive OR for free:</b> if both digits need I or M lit, the screen just stays on — no extra gate</li>
+          <li><b>Gate cost:</b> 2× 4-to-16 decoders + ~7 OR chains per digit feeding segment AND gates</li>
+          <li><b>Cool use:</b> wire the 4-bit adder output directly — display 0–30 as two decimal digits</li>
+        </ul>
+      </div>
+
+      <div class="ha-layout">
+
+        <div>
+          <p class="diagram-label">Display</p>
+          <svg class="seg-display-svg" viewBox="0 0 132 92"
+               style="max-width:264px;width:100%"
+               aria-label="Two-digit segment display"
+               id="seg-svg">
+
+            <!-- ── Digit 1 ── -->
+            <rect id="seg-A1" class="seg" x="17"  y="4"  width="44" height="7"  rx="2"/>
+            <rect id="seg-H"  class="seg" x="8"   y="13" width="7"  height="26" rx="2"/>
+            <rect id="seg-G1" class="seg" x="17"  y="41" width="44" height="7"  rx="2"/>
+            <rect id="seg-L"  class="seg" x="8"   y="50" width="7"  height="26" rx="2"/>
+            <rect id="seg-D1" class="seg" x="17"  y="78" width="44" height="7"  rx="2"/>
+
+            <!-- ── Shared inner verticals (I = top, M = bottom) ── -->
+            <rect id="seg-I"  class="seg" x="63"  y="13" width="7"  height="26" rx="2"/>
+            <rect id="seg-M"  class="seg" x="63"  y="50" width="7"  height="26" rx="2"/>
+
+            <!-- ── Digit 2 ── -->
+            <rect id="seg-A2" class="seg" x="72"  y="4"  width="44" height="7"  rx="2"/>
+            <rect id="seg-K"  class="seg" x="118" y="13" width="7"  height="26" rx="2"/>
+            <rect id="seg-G2" class="seg" x="72"  y="41" width="44" height="7"  rx="2"/>
+            <rect id="seg-N"  class="seg" x="118" y="50" width="7"  height="26" rx="2"/>
+            <rect id="seg-D2" class="seg" x="72"  y="78" width="44" height="7"  rx="2"/>
+
+          </svg>
+        </div>
+
+        <div class="ha-right">
+          <p class="diagram-label">Live Preview</p>
+          <div class="seg-live">
+            <div class="seg-controls">
+              <button class="seg-step-btn" id="seg-btn-dec">−</button>
+              <span class="seg-value-display" id="seg-value-display">00</span>
+              <button class="seg-step-btn" id="seg-btn-inc">+</button>
+            </div>
+            <div class="seg-controls" style="margin-top:0.65rem">
+              <button class="try-btn" id="seg-link-rca">⚡ Link to Adder</button>
+            </div>
+            <p class="clock-note" style="margin-top:0.8rem">When linked, updates live from the 4-bit adder output (0–30). Disconnect to step freely up to 99.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="concept" style="margin-top:2.5rem">
+        <h3>Segment patterns for digits 0–9</h3>
+        <p>Standard 7-segment encoding per digit. In the display: <b>A→A1/A2</b>, <b>b→I/K</b>, <b>c→M/N</b>, <b>D→D1/D2</b>, <b>e→L/M</b>, <b>f→H/I</b>, <b>G→G1/G2</b>.</p>
+        <table class="truth-table seg-decode-table">
+          <thead>
+            <tr><th>Digit</th><th>A top</th><th>b top-R</th><th>c bot-R</th><th>D bot</th><th>e bot-L</th><th>f top-L</th><th>G mid</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td></tr>
+            <tr><td>1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o0">0</td></tr>
+            <tr><td>2</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td></tr>
+            <tr><td>3</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o1">1</td></tr>
+            <tr><td>4</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td></tr>
+            <tr><td>5</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td></tr>
+            <tr><td>6</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td></tr>
+            <tr><td>7</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o0">0</td><td class="o o0">0</td></tr>
+            <tr><td>8</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td></tr>
+            <tr><td>9</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o1">1</td><td class="o o0">0</td><td class="o o1">1</td><td class="o o1">1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
 
   <section id="led-display">
     <div class="container">
