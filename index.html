@@ -17,6 +17,7 @@
       <li><a href="#half-adder">Half Adder</a></li>
       <li><a href="#decoder">Decoder</a></li>
       <li><a href="#sr-latch">SR Latch</a></li>
+      <li><a href="#t-latch">T-Latch</a></li>
       <li><a href="#mux">MUX</a></li>
       <li><a href="#full-adder">Full Adder</a></li>
       <li><a href="#led-display">LED</a></li>
@@ -699,6 +700,124 @@
   </section>
 
 
+
+  <section id="t-latch">
+    <div class="container">
+
+      <h2>Toggle Latch (T-Latch)</h2>
+      <p class="section-sub">Press once — ON. Press again — OFF. One button, persistent state, zero levers left on.</p>
+
+      <div class="concept">
+        <p>A toggle latch flips its output every time the trigger input <b>T</b> pulses. Built from the SR latch — the circuit automatically picks Set or Reset so you never have to think about it.</p>
+        <div class="not-box" style="margin-top:0.8rem">
+          <strong>What is Q&#x0305; (Q-bar)?</strong> The SR latch produces <b>two outputs</b>: <b>Q</b> (the main output, bottom NOR gate) and <b>Q&#x0305;</b> (top NOR gate — always the <b>reverse</b> of Q). When Q=0 then Q&#x0305;=1, and vice versa. You get it for free from the SR latch’s cross-coupling. In the diagram below it is the <b>upper dashed wire</b> looping back over the top.
+        </div>
+        <ul class="bullet-list">
+          <li><b>T = 0 (idle):</b> both AND gates output 0 &rarr; SR latch holds &mdash; Q unchanged</li>
+          <li><b>T = 1, Q = 0:</b> AND_S fires &rarr; S=1, R=0 &rarr; SR sets &rarr; Q becomes 1</li>
+          <li><b>T = 1, Q = 1:</b> AND_R fires &rarr; S=0, R=1 &rarr; SR resets &rarr; Q becomes 0</li>
+          <li><b>Use a button (momentary), not a lever</b> &mdash; a lever held ON will keep toggling every delay tick</li>
+          <li><b>4 gates total:</b> 2 AND + 2 NOR (the SR latch)</li>
+        </ul>
+      </div>
+
+      <div class="ha-layout">
+
+        <div>
+          <p class="diagram-label">Circuit</p>
+          <svg class="circuit-svg ha-svg" viewBox="0 0 440 155" aria-label="Toggle latch circuit diagram">
+
+            <!-- AND_R: TOP gate — T AND Q → fires R (reset) when Q is already 1 -->
+            <rect x="90" y="22" width="56" height="28" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="118" y="40" class="gate-box-lbl">AND</text>
+
+            <!-- AND_S: BOTTOM gate — T AND Q-bar → fires S (set) when Q is 0 -->
+            <rect x="90" y="108" width="56" height="28" rx="2" fill="none" stroke="#3a3a3a" stroke-width="1.5"/>
+            <text x="118" y="126" class="gate-box-lbl">AND</text>
+
+            <!-- SR LATCH block -->
+            <rect x="235" y="18" width="145" height="118" rx="3" fill="none" stroke="#444" stroke-width="1.5"/>
+            <text x="307" y="72"  class="gate-box-lbl">SR LATCH</text>
+            <text x="307" y="84"  class="gate-box-lbl">(2x NOR)</text>
+
+            <!-- SR port ticks -->
+            <line x1="235" y1="44"  x2="227" y2="44"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="235" y1="112" x2="227" y2="112" stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="380" y1="44"  x2="388" y2="44"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="380" y1="112" x2="388" y2="112" stroke="#3d3d3d" stroke-width="1.5"/>
+
+            <!-- SR port labels -->
+            <text x="239" y="41"  class="wire-lbl" fill="#666">S</text>
+            <text x="239" y="109" class="wire-lbl" fill="#666">R</text>
+            <text x="383" y="41"  class="wire-lbl accent-lbl">Q</text>
+            <text x="383" y="109" class="wire-lbl" fill="#888">Q&#x0305;</text>
+
+            <!-- T input — splits up to AND_R bot-in (y=43), down to AND_S top-in (y=115) -->
+            <line x1="0"  y1="80" x2="28"  y2="80"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <circle cx="28" cy="80" r="2.5" fill="#555"/>
+            <text x="2" y="77" class="wire-lbl">T</text>
+            <line x1="28" y1="80"  x2="28"  y2="43"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="28" y1="43"  x2="90"  y2="43"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="28" y1="80"  x2="28"  y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="28" y1="115" x2="90"  y2="115" stroke="#3d3d3d" stroke-width="1.5"/>
+
+            <!-- AND_R out (146,36) → R wire → down to SR R input (235,112) -->
+            <line x1="146" y1="36"  x2="188" y2="36"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="188" y1="36"  x2="188" y2="112" stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="188" y1="112" x2="235" y2="112" stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="148" y="32" class="wire-lbl" fill="#777">R</text>
+
+            <!-- AND_S out (146,122) → S wire → up to SR S input (235,44) -->
+            <line x1="146" y1="122" x2="208" y2="122" stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="208" y1="122" x2="208" y2="44"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <line x1="208" y1="44"  x2="235" y2="44"  stroke="#3d3d3d" stroke-width="1.5"/>
+            <text x="148" y="136" class="wire-lbl" fill="#777">S</text>
+
+            <!-- Q output (380,44) → right. Junction for feedback -->
+            <line x1="380" y1="44" x2="440" y2="44" stroke="#3d3d3d" stroke-width="1.5"/>
+            <circle cx="405" cy="44" r="2.5" fill="#555"/>
+
+            <!-- Q-bar output (380,112) → right. Junction for feedback -->
+            <line x1="380" y1="112" x2="440" y2="112" stroke="#3d3d3d" stroke-width="1.5"/>
+            <circle cx="415" cy="112" r="2.5" fill="#555"/>
+
+            <!-- Q feedback arc: (405,44) curves OVER top → AND_R top input (90,29) -->
+            <path d="M 405,44 C 422,8 62,8 90,29"
+                  fill="none" stroke="#57e89c" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="247" y="6" class="wire-lbl" fill="#57e89c" text-anchor="middle">Q &#x2192; AND_R (reset when Q=1)</text>
+
+            <!-- Q-bar feedback arc: (415,112) curves UNDER bottom → AND_S bot input (90,129) -->
+            <path d="M 415,112 C 432,148 62,148 90,129"
+                  fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="247" y="154" class="wire-lbl" fill="#888" text-anchor="middle">Q&#x0305; &#x2192; AND_S (set when Q=0)</text>
+
+          </svg>
+        </div>
+
+        <div class="ha-right">
+          <p class="diagram-label">Behaviour</p>
+          <table class="truth-table">
+            <thead><tr><th>T</th><th>Q before</th><th>Q after</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr data-tl="hold"><td>0</td><td>&mdash;</td><td class="o">unchanged</td><td class="sr-state">Hold</td></tr>
+              <tr data-tl="set"><td>pulse</td><td>0</td><td class="o o1">1</td><td class="sr-state">&uarr; Set</td></tr>
+              <tr data-tl="reset"><td>pulse</td><td>1</td><td class="o o0">0</td><td class="sr-state">&darr; Reset</td></tr>
+            </tbody>
+          </table>
+          <div class="gate-try ha-try">
+            <button class="try-btn" id="tl-btn">Press T (Toggle)</button>
+            <span class="try-out">
+              Q = <span id="tl-q" class="try-val o0">0</span>
+              <span id="tl-action" class="sr-demo-state">Hold</span>
+            </span>
+          </div>
+          <p class="clock-note" style="margin-top:0.8rem">In-game: wire a <b>button</b> (not a lever) to T &mdash; a lever held ON will keep toggling every delay tick.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <section id="mux">
     <div class="container">
 
@@ -1333,6 +1452,37 @@
     ledBtnB.addEventListener('click',        () => { ledSwitchB        ^= 1; refreshLedSwitchButtons(); });
     ledBtnActivate.addEventListener('click', () => { ledSwitchActivate ^= 1; refreshLedSwitchButtons(); });
     refreshLedSwitchButtons();
+
+
+    // ── T-Latch interactive ──
+    const tlBtn       = document.getElementById('tl-btn');
+    const tlQSpan     = document.getElementById('tl-q');
+    const tlActionLbl = document.getElementById('tl-action');
+    const tlRows      = document.querySelectorAll('#t-latch tbody tr');
+    let tlQState     = 0;
+    let tlLastAction = 'hold';
+
+    function refreshTLatch(pressed) {
+      if (pressed) {
+        tlQState    ^= 1;
+        tlLastAction = tlQState === 1 ? 'set' : 'reset';
+      } else {
+        tlLastAction = 'hold';
+      }
+
+      tlQSpan.textContent = tlQState;
+      tlQSpan.className   = `try-val ${tlQState ? 'o1' : 'o0'}`;
+
+      const actionLabels = { hold: 'Hold', set: '↑ Set', reset: '↓ Reset' };
+      tlActionLbl.textContent = actionLabels[tlLastAction];
+
+      tlRows.forEach(row => {
+        row.classList.toggle('row-active', row.dataset.tl === tlLastAction);
+      });
+    }
+
+    tlBtn.addEventListener('click', () => refreshTLatch(true));
+    refreshTLatch(false);
 
     // ── Sticky nav: highlight active section via IntersectionObserver ──
     const allPageSections  = document.querySelectorAll('section[id]');
