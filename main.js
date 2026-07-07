@@ -1,3 +1,7 @@
+// Declared here so refreshRCA() can safely read it before the
+// segment-display block is reached (avoids temporal dead zone crash).
+let segLinkedToRCA = false;
+
 const GATE_LOGIC = {
   AND:  (a, b) => a & b,
   OR:   (a, b) => a | b,
@@ -384,3 +388,150 @@ const navSectionObserver = new IntersectionObserver(
 );
 
 allPageSections.forEach(section => navSectionObserver.observe(section));
+
+// ── 4-bit Ripple-Carry Adder interactive ──
+const rcaBitsA = [0, 0, 0, 0]; // index 0 = bit 3 (MSB), index 3 = bit 0 (LSB)
+const rcaBitsB = [0, 0, 0, 0];
+
+const rcaADecEl   = document.getElementById('rca-a-dec');
+const rcaBDecEl   = document.getElementById('rca-b-dec');
+const rcaSumDecEl = document.getElementById('rca-sum-dec');
+const rcaCoutEl   = document.getElementById('rca-cout');
+const rcaOutBits  = [
+  document.getElementById('rca-s3'),
+  document.getElementById('rca-s2'),
+  document.getElementById('rca-s1'),
+  document.getElementById('rca-s0'),
+];
+
+function rcaGetValue(bits) {
+  return (bits[0] << 3) | (bits[1] << 2) | (bits[2] << 1) | bits[3];
+}
+
+function rcaSetOutBit(element, bitValue) {
+  element.textContent = bitValue;
+  element.classList.remove('bit-0', 'bit-1');
+  element.classList.add(bitValue ? 'bit-1' : 'bit-0');
+}
+
+function refreshRCA() {
+  const valueA   = rcaGetValue(rcaBitsA);
+  const valueB   = rcaGetValue(rcaBitsB);
+  const sumTotal = valueA + valueB;
+
+  rcaADecEl.textContent   = `= ${valueA}`;
+  rcaBDecEl.textContent   = `= ${valueB}`;
+  rcaSumDecEl.textContent = `= ${sumTotal}`;
+
+  rcaSetOutBit(rcaCoutEl, (sumTotal >> 4) & 1);
+
+  [(sumTotal >> 3) & 1, (sumTotal >> 2) & 1, (sumTotal >> 1) & 1, sumTotal & 1]
+    .forEach((bit, index) => rcaSetOutBit(rcaOutBits[index], bit));
+
+  if (typeof segLinkedToRCA !== 'undefined' && segLinkedToRCA) {
+    refreshSegDisplay(sumTotal);
+  }
+}
+
+document.querySelectorAll('.rca-bit-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const inputName      = button.dataset.rca;
+    const bitPosition    = parseInt(button.dataset.bit, 10);
+    const bitArrayIndex  = 3 - bitPosition;
+    const targetBitArray = inputName === 'a' ? rcaBitsA : rcaBitsB;
+
+    targetBitArray[bitArrayIndex] ^= 1;
+
+    button.textContent = targetBitArray[bitArrayIndex];
+    button.classList.toggle('bit-on', targetBitArray[bitArrayIndex] === 1);
+
+    refreshRCA();
+  });
+});
+
+refreshRCA();
+
+// ── Two-Digit Segment Display interactive ──
+const SEG_PATTERNS = {
+  //     a  b  c  d  e  f  g
+  0: [1, 1, 1, 1, 1, 1, 0],
+  1: [0, 1, 1, 0, 0, 0, 0],
+  2: [1, 1, 0, 1, 1, 0, 1],
+  3: [1, 1, 1, 1, 0, 0, 1],
+  4: [0, 1, 1, 0, 0, 1, 1],
+  5: [1, 0, 1, 1, 0, 1, 1],
+  6: [1, 0, 1, 1, 1, 1, 1],
+  7: [1, 1, 1, 0, 0, 0, 0],
+  8: [1, 1, 1, 1, 1, 1, 1],
+  9: [1, 1, 1, 1, 0, 1, 1],
+};
+
+let segDisplayValue = 0;
+
+const segValueDisplayEl = document.getElementById('seg-value-display');
+const segBtnInc         = document.getElementById('seg-btn-inc');
+const segBtnDec         = document.getElementById('seg-btn-dec');
+const segLinkBtn        = document.getElementById('seg-link-rca');
+
+function refreshSegDisplay(value) {
+  const clampedValue = Math.max(0, Math.min(99, value));
+  const tensDigit    = Math.floor(clampedValue / 10);
+  const unitsDigit   = clampedValue % 10;
+
+  const tensPattern  = SEG_PATTERNS[tensDigit];
+  const unitsPattern = SEG_PATTERNS[unitsDigit];
+
+  // Digit 1: a=A1, b=I(shared), c=M(shared), d=D1, e=L, f=H, g=G1
+  // Digit 2: a=A2, b=K,         c=N,          d=D2, e=M(shared), f=I(shared), g=G2
+  const segStates = {
+    A1: tensPattern[0],
+    H:  tensPattern[5],
+    I:  tensPattern[1] | unitsPattern[5],
+    G1: tensPattern[6],
+    L:  tensPattern[4],
+    M:  tensPattern[2] | unitsPattern[4],
+    D1: tensPattern[3],
+    A2: unitsPattern[0],
+    K:  unitsPattern[1],
+    G2: unitsPattern[6],
+    N:  unitsPattern[2],
+    D2: unitsPattern[3],
+  };
+
+  Object.entries(segStates).forEach(([segmentName, isActive]) => {
+    const segmentElement = document.getElementById(`seg-${segmentName}`);
+    if (segmentElement) {
+      segmentElement.classList.toggle('seg-on', Boolean(isActive));
+    }
+  });
+
+  segValueDisplayEl.textContent = clampedValue.toString().padStart(2, '0');
+}
+
+segBtnInc.addEventListener('click', () => {
+  if (segLinkedToRCA) return;
+  segDisplayValue = Math.min(99, segDisplayValue + 1);
+  refreshSegDisplay(segDisplayValue);
+});
+
+segBtnDec.addEventListener('click', () => {
+  if (segLinkedToRCA) return;
+  segDisplayValue = Math.max(0, segDisplayValue - 1);
+  refreshSegDisplay(segDisplayValue);
+});
+
+segLinkBtn.addEventListener('click', () => {
+  segLinkedToRCA = !segLinkedToRCA;
+  segLinkBtn.classList.toggle('btn-on', segLinkedToRCA);
+  segLinkBtn.textContent  = segLinkedToRCA ? '⚡ Linked to Adder' : '⚡ Link to Adder';
+  segBtnInc.disabled      = segLinkedToRCA;
+  segBtnDec.disabled      = segLinkedToRCA;
+
+  if (segLinkedToRCA) {
+    const rcaSum = rcaGetValue(rcaBitsA) + rcaGetValue(rcaBitsB);
+    segDisplayValue = rcaSum;
+    refreshSegDisplay(segDisplayValue);
+  }
+});
+
+refreshSegDisplay(0);
